@@ -2,7 +2,7 @@ package code
 
 import reactivemongo.api.{MongoConnection, MongoDriver}
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONArray, BSONDocument, BSONInteger, BSONString}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
@@ -18,8 +18,13 @@ object Main extends App {
       db   <- conn.database("olympics")
     } yield db.collection[BSONCollection]("medals")
 
-  val query: Nothing =
-    ???
+  val query: BSONDocument =
+    BSONDocument(List(
+      "$and" -> BSONArray(List(
+        BSONDocument(List("team" -> BSONString("GBR"))),
+        BSONDocument(List("gold" -> BSONInteger(1))),
+      ))
+    ))
 
   def program: Future[List[BSONDocument]] =
     collection.flatMap { collection =>
