@@ -20,5 +20,8 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "reactivemongo" % "0.18.7",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.18.7-play27",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "org.typelevel" %% "cats-core" % "1.4.0"
+  "org.typelevel" %% "cats-core" % "1.4.0",
+  "com.typesafe.play" %% "play-json" % "2.7.0",
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test
+
 )

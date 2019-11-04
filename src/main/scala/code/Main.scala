@@ -1,12 +1,13 @@
 package code
 
-import reactivemongo.api.{MongoConnection, MongoDriver}
+import code.syntax._
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONArray, BSONDocument, BSONInteger, BSONString}
+import reactivemongo.api.{Cursor, MongoConnection, MongoDriver}
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 object Main extends App {
   val driver = MongoDriver()
@@ -18,17 +19,12 @@ object Main extends App {
       db   <- conn.database("olympics")
     } yield db.collection[BSONCollection]("medals")
 
-  val query: BSONDocument =
-    BSONDocument(List(
-      "$and" -> BSONArray(List(
-        BSONDocument(List("team" -> BSONString("GBR"))),
-        BSONDocument(List("gold" -> BSONInteger(1))),
-      ))
-    ))
+  val query: Query =
+    "team" === "GBR" && "gold" === 1
 
   def program: Future[List[BSONDocument]] =
     collection.flatMap { collection =>
-      collection.find(query, None).cursor[BSONDocument]().collect[List](-1)
+      collection.find(query, None).cursor[BSONDocument]().collect[List](-1, Cursor.FailOnError())
     }
 
   println(Await.result(program, 10.seconds))
